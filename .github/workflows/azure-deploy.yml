@@ -8,26 +8,23 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+ß
     steps:
-      # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Step 2: Set up Azure CLI
       - name: Set up Azure CLI
         uses: azure/setup-azure-cli@v1
 
-      # Step 3: Log in to Azure using the Service Principal credentials stored in GitHub Secrets
       - name: Log in to Azure
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}          # GitHub Secret for Azure Client ID
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}  # GitHub Secret for Azure Client Secret
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}          # GitHub Secret for Azure Tenant ID
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}  # GitHub Secret for Azure Subscription ID
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}  
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}          # 
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}  # 
 
-      # Step 4: Deploy to Azure Web App (replace with your actual Web App and Resource Group names)
+
       - name: Deploy to Azure Web App
         run: |
           echo "Starting deployment to Azure Web App..."
