@@ -6,9 +6,9 @@ on:
       - main  # Trigger deployment when pushing to the main branch
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-ß
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -20,18 +20,18 @@ jobs:
         uses: azure/login@v1
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}  
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}          # 
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}  # 
-
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy to Azure Web App
         run: |
           echo "Starting deployment to Azure Web App..."
 
-          # Deploy the web app to Azure (replace with your actual Web App name and Resource Group)
-          az webapp up --name your-webapp-name --resource-group your-resource-group --sku B1 --location eastus
+          az webapp up \
+            --name <your-webapp-name> \
+            --resource-group apac-es-devops-lunar-gultom \
+            --sku B1 \
+            --location eastasia
 
           echo "Web App deployed successfully."
-
-:
