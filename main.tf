@@ -1,23 +1,24 @@
 provider "azurerm" {
   features {}
 
-  subscription_id = var.subscription_id
   client_id       = var.client_id
   client_secret   = var.client_secret
   tenant_id       = var.tenant_id
+  subscription_id = var.subscription_id
 }
 
-#################################
-# Production VM Infrastructure
-#################################
-
+#############################
 # Resource Group for VM
+#############################
 resource "azurerm_resource_group" "vm_rg" {
   name     = var.resource_group_name
   location = var.location
   tags     = var.tags
 }
 
+#############################
+# Virtual Network
+#############################
 resource "azurerm_virtual_network" "vnet" {
   name                = var.vnet_name
   address_space       = var.vnet_address_space
@@ -26,15 +27,23 @@ resource "azurerm_virtual_network" "vnet" {
   tags                = var.tags
 }
 
+#############################
+# Subnets (multiple)
+#############################
 resource "azurerm_subnet" "subnet" {
-  name                 = var.subnet_name
+  for_each             = { for subnet in var.subnets : subnet.name => subnet }
+  name                 = each.value.name
   resource_group_name  = azurerm_resource_group.vm_rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = var.subnet_prefixes
+  address_prefixes     = [each.value.address_prefix]
 }
 
+#############################
+# Public IP (one per VM)
+#############################
 resource "azurerm_public_ip" "pip" {
-  name                = "${var.vm_name}-pip"
+  for_each = { for vm in var.virtual_machines : vm.name => vm }
+  name                = "${each.value.name}-pip"
   location            = var.location
   resource_group_name = var.resource_group_name
   allocation_method   = "Static"
@@ -42,34 +51,55 @@ resource "azurerm_public_ip" "pip" {
   tags                = var.tags
 }
 
+#############################
+# Network Interface (one per VM)
+#############################
 resource "azurerm_network_interface" "nic" {
-  name                = "${var.vm_name}-nic"
+  for_each = { for vm in var.virtual_machines : vm.name => vm }
+  name                = "${each.value.name}-nic"
   location            = var.location
   resource_group_name = var.resource_group_name
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.subnet.id
+    subnet_id                     = azurerm_subnet.subnet[each.value.subnet_name].id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.pip.id
+    public_ip_address_id          = azurerm_public_ip.pip[each.key].id
   }
 
   tags = var.tags
 }
 
+#############################
+# Windows Virtual Machines (multiple)
+#############################
 resource "azurerm_windows_virtual_machine" "vm" {
-  name                  = var.vm_name
-  resource_group_name   = var.resource_group_name
-  location              = var.location
-  size                  = var.vm_size
-  admin_username        = var.admin_username
-  admin_password        = var.admin_password
-  network_interface_ids = [azurerm_network_interface.nic.id]
+  for_each = { for vm in var.virtual_machines : vm.name => vm }
+
+  name                = each.value.name
+  resource_group_name = each.value.resource_group
+  location            = each.value.location
+  size                = each.value.vm_size
+  admin_username      = each.value.admin_username
+  admin_password      = var.admin_password # or use each.value.admin_password if you store it there
+  network_interface_ids = [azurerm_network_interface.nic[each.key].id]
 
   os_disk {
+    name                 = each.value.os_disk.name
     caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-    name                 = "${var.vm_name}-osdisk"
+    storage_account_type = each.value.os_disk.storage_account_type
+    disk_size_gb         = each.value.os_disk.disk_size_gb
+  }
+
+  dynamic "data_disk" {
+    for_each = each.value.data_disks
+    content {
+      lun                  = data_disk.value.lun
+      caching              = "None"
+      storage_account_type = data_disk.value.storage_account_type
+      disk_size_gb         = data_disk.value.disk_size_gb
+      create_option        = "Empty"
+    }
   }
 
   source_image_reference {
@@ -82,106 +112,20 @@ resource "azurerm_windows_virtual_machine" "vm" {
   tags = var.tags
 }
 
-#################################
-# Monitoring + Alerting Stack
-#################################
-
-# Resource Group for Monitoring
-resource "azurerm_resource_group" "monitor_rg" {
-  name     = "rg-monitor-ticketing"
-  location = "East US"
-}
-
-resource "azurerm_log_analytics_workspace" "log" {
-  name                = "loganalytics-monitor"
-  location            = azurerm_resource_group.monitor_rg.location
-  resource_group_name = azurerm_resource_group.monitor_rg.name
-  sku                 = "PerGB2018"
-  retention_in_days   = 30
-}
-
-resource "azurerm_application_insights" "appi" {
-  name                = "appi-monitor-demo"
-  location            = azurerm_resource_group.monitor_rg.location
-  resource_group_name = azurerm_resource_group.monitor_rg.name
-  application_type    = "web"
-  workspace_id        = azurerm_log_analytics_workspace.log.id
-}
-
-resource "azurerm_storage_account" "sa" {
-  name                     = "storageacctmonitor"
-  resource_group_name      = azurerm_resource_group.monitor_rg.name
-  location                 = azurerm_resource_group.monitor_rg.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-}
-
-resource "azurerm_app_service_plan" "asp" {
-  name                = "asp-monitor"
-  location            = azurerm_resource_group.monitor_rg.location
-  resource_group_name = azurerm_resource_group.monitor_rg.name
-  os_type             = "Linux"
-
-  sku {
-    tier = "Dynamic"
-    size = "Y1"
-  }
-}
-
-resource "azurerm_function_app" "func" {
-  name                       = "func-monitor-ticketing"
-  location                   = azurerm_resource_group.monitor_rg.location
-  resource_group_name        = azurerm_resource_group.monitor_rg.name
-  storage_account_name       = azurerm_storage_account.sa.name
-  storage_account_access_key = azurerm_storage_account.sa.primary_access_key
-  app_service_plan_id        = azurerm_app_service_plan.asp.id
-  os_type                    = "linux"
-  version                    = "~4"
-  runtime_stack              = "python"
-
-  site_config {
-    application_stack {
-      python_version = "3.9"
-    }
+#############################
+# VM Extensions (multiple)
+#############################
+resource "azurerm_virtual_machine_extension" "vm_extension" {
+  for_each = {
+    for vm in var.virtual_machines :
+    vm.name => vm
+    if length(vm.extensions) > 0
   }
 
-  app_settings = {
-    "FUNCTIONS_WORKER_RUNTIME" = "python"
-    "TICKET_API_ENDPOINT"      = var.ticket_api_endpoint
-    "TICKET_API_KEY"           = var.ticket_api_key
-  }
-}
-
-resource "azurerm_monitor_action_group" "action_group" {
-  name                = "ag-monitor-ticket"
-  resource_group_name = azurerm_resource_group.monitor_rg.name
-  short_name          = "agmon"
-
-  azure_function {
-    function_app_resource_id = azurerm_function_app.func.id
-    function_name            = "TicketNotifier"
-    http_trigger_url         = "https://${azurerm_function_app.func.default_hostname}/api/TicketNotifier"
-  }
-}
-
-resource "azurerm_monitor_metric_alert" "alert" {
-  name                = "metric-alert-failure"
-  resource_group_name = azurerm_resource_group.monitor_rg.name
-  scopes              = [azurerm_application_insights.appi.id]
-  description         = "Alert on failed requests"
-  severity            = 2
-  frequency           = "PT1M"
-  window_size         = "PT5M"
-
-  criteria {
-    metric_namespace = "microsoft.insights/components"
-    metric_name      = "requests/failed"
-    aggregation      = "Total"
-    operator         = "GreaterThan"
-    threshold        = 10
-  }
-
-  action {
-    action_group_id = azurerm_monitor_action_group.action_group.id
-  }
+  name                 = each.value.extensions[0].name
+  virtual_machine_id   = azurerm_windows_virtual_machine.vm[each.key].id
+  publisher            = each.value.extensions[0].publisher
+  type                 = each.value.extensions[0].type
+  type_handler_version = each.value.extensions[0].type_handler_version
+  auto_upgrade_minor_version = each.value.extensions[0].auto_upgrade_minor_version
 }
