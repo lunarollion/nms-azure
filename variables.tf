@@ -17,16 +17,19 @@ variable "client_secret" {
 variable "tenant_id" {
   type        = string
   description = "Azure Tenant ID"
+  default     = "f8d8c41c-a3ff-4e44-abee-8eb6517b2f65"
 }
 
 variable "resource_group_name" {
   type        = string
   description = "Resource group name for VMs"
+  default     = "hyc-windchill-prd-rg"
 }
 
 variable "location" {
   type        = string
   description = "Azure region"
+  default     = "southeastasia"
 }
 
 variable "tags" {
@@ -38,6 +41,7 @@ variable "tags" {
 variable "vnet_name" {
   type        = string
   description = "Name of the Virtual Network"
+  default     = "hyc-windchill-prd-vnet"
 }
 
 variable "vnet_address_space" {
@@ -54,13 +58,15 @@ variable "subnets" {
 }
 
 variable "virtual_machines" {
+  description = "List of existing VMs to create/manage"
   type = list(object({
-    name              = string
-    location          = string
-    resource_group    = string
-    vm_size           = string
-    admin_username    = string
-    subnet_name       = string
+    name           = string
+    location       = string
+    resource_group = string
+    vm_size        = string
+    admin_username = string
+    admin_password = string
+    subnet_name    = string
     os_disk = object({
       name                 = string
       storage_account_type = string
@@ -80,11 +86,43 @@ variable "virtual_machines" {
       auto_upgrade_minor_version = bool
     }))
   }))
-  description = "List of VMs with their configurations"
-}
-
-variable "admin_password" {
-  type        = string
-  description = "Admin password for the VMs"
-  sensitive   = true
+  default = [
+    {
+      name           = "apptier-prd-vm"
+      location       = "southeastasia"
+      resource_group = "hyc-windchill-prd-rg"
+      vm_size        = "Standard_A8m_v2"
+      admin_username = "hycadmin"
+      admin_password = "YourPasswordHere!" # recommend moving to sensitive var or secret store
+      subnet_name    = "apptier-prd-subnet"
+      os_disk = {
+        name                 = "apptier-prd-vm_OsDisk_1_b61e89de0307453e9848ef27a948a526"
+        storage_account_type = "StandardSSD_LRS"
+        disk_size_gb         = 127
+      }
+      data_disks = [
+        {
+          name                 = "apptier-prd-vm_DataDisk_0"
+          lun                  = 0
+          storage_account_type = "StandardSSD_LRS"
+          disk_size_gb         = 250
+        },
+        {
+          name                 = "apptier-prd-vm_DataDisk_1"
+          lun                  = 2
+          storage_account_type = "Standard_LRS"
+          disk_size_gb         = 1024
+        }
+      ]
+      extensions = [
+        {
+          name                      = "AzureNetworkWatcherExtension"
+          publisher                 = "Microsoft.Azure.NetworkWatcher"
+          type                      = "NetworkWatcherAgentWindows"
+          type_handler_version      = "1.4"
+          auto_upgrade_minor_version = true
+        }
+      ]
+    }
+  ]
 }
