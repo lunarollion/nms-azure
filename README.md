@@ -1,7 +1,8 @@
-root/
+Azure Terraform Structure
 ├── main.tf           # Root main file, usually calls modules
 ├── variables.tf
 ├── providers.tf
+├── terraform.tfvars        # <-- your variable values 
 ├── outputs.tf
 ├── modules/
 │   ├── vm_module/
@@ -12,4 +13,4 @@ root/
 │        ├── main.tf           # Monitoring resources (Log Analytics, Diagnostic settings, alerts)
 │        ├── variables.tf
 │        └── outputs.tf
-└── monitoring.tf      # Optional: You can put monitoring here if NOT using a separate module
+
