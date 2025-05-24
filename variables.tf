@@ -57,6 +57,11 @@ variable "subnets" {
   description = "List of subnets with name and prefix"
 }
 
+variable "freshservice_webhook_url" {
+  type        = string
+  description = "Azure Function URL that creates tickets in Freshservice"
+}
+
 variable "virtual_machines" {
   description = "List of existing VMs to create/manage"
   type = list(object({

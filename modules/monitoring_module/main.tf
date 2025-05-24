@@ -1,25 +1,14 @@
-variable "resource_group_name" {
-  type        = string
-  description = "Resource group name"
-  default     = "apac-es-devops-lunar-gultom"
-}
-
-variable "vm_id" {
-  type        = string
-  description = "ID of the VM to monitor"
-  default     = "/subscriptions/0e1373c7-d99a-4eaa-9e16-59e648375f9e/resourceGroups/apac-es-devops-lunar-gultom/providers/Microsoft.Compute/virtualMachines/POCTesting"
-}
-
-resource "azurerm_monitor_action_group" "poc_automate_alert" {
+resource "azurerm_monitor_action_group" "poc_alert" {
   name                = "POCAutomateAlert"
   resource_group_name = var.resource_group_name
   short_name          = "poc-alert"
 
   email_receiver {
-    name                  = "AdminEmail"
-    email_address         = "lunar.gultom@ollion.com"
+    email_address           = var.alert_email
     use_common_alert_schema = true
   }
+
+  tags = var.tags
 }
 
 resource "azurerm_monitor_metric_alert" "high_cpu_alert" {
@@ -42,28 +31,15 @@ resource "azurerm_monitor_metric_alert" "high_cpu_alert" {
   }
 
   action {
-    action_group_id = azurerm_monitor_action_group.poc_automate_alert.id
+    action_group_id = azurerm_monitor_action_group.poc_alert.id
   }
 }
 
-resource "azurerm_monitor_action_group" "poc_alert" {
-  name                = "POCAutomateAlert"
-  resource_group_name = var.resource_group_name
-  short_name          = "poc-alert"
-
-  email_receiver {
-    name                  = "AdminEmail"
-    email_address         = "lunar.gultom@ollion.com"
-    use_common_alert_schema = true
-  }
-}
-
-# DNS Zones Query Failure Count > 5 in 5 minutes
 resource "azurerm_monitor_metric_alert" "dns_query_failure" {
   name                = "DNSQueryFailureCount"
   resource_group_name = var.resource_group_name
-  scopes              = [var.dns_zone_id]   # Pass your DNS zone resource ID here
-  description         = "Alert if QueryFailureCount > 5 in 5 minutes"
+  scopes              = [var.dns_zone_id]
+  description         = "Alert if DNS QueryFailureCount > 5 in 5 minutes"
   severity            = 3
   frequency           = "PT1M"
   window_size         = "PT5M"
@@ -72,34 +48,9 @@ resource "azurerm_monitor_metric_alert" "dns_query_failure" {
   criteria {
     metric_namespace = "Microsoft.Network/dnszones"
     metric_name      = "QueryFailureCount"
-    aggregation     = "Total"
-    operator        = "GreaterThan"
-    threshold       = 5
-  }
-
-  action {
-    action_group_id = azurerm_monitor_action_group.poc_alert.id
-  }
-}
-
-# CDN profile alerts
-
-resource "azurerm_monitor_metric_alert" "cdn_client_request_count" {
-  name                = "CDNClientRequestCount"
-  resource_group_name = var.resource_group_name
-  scopes              = [var.cdn_profile_id]  # Pass your CDN profile resource ID here
-  description         = "Number of requests received from users (5 min)"
-  severity            = 3
-  frequency           = "PT1M"
-  window_size         = "PT5M"
-  enabled             = true
-
-  criteria {
-    metric_namespace = "Microsoft.Cdn/profiles"
-    metric_name      = "ClientRequestCount"
-    aggregation     = "Total"
-    operator        = "GreaterThan"
-    threshold       = 0  # This just tracks total requests, alerting if > 0 (adjust logic if needed)
+    aggregation      = "Total"
+    operator         = "GreaterThan"
+    threshold        = 5
   }
 
   action {
@@ -111,7 +62,7 @@ resource "azurerm_monitor_metric_alert" "cdn_http_5xx" {
   name                = "CDNHttpStatusCodeCount5xx"
   resource_group_name = var.resource_group_name
   scopes              = [var.cdn_profile_id]
-  description         = "Alert if 5xx status codes > 1% of total requests OR > 50 per minute"
+  description         = "Alert if 5xx status codes > 1% or > 50 per minute"
   severity            = 3
   frequency           = "PT1M"
   window_size         = "PT5M"
@@ -150,7 +101,7 @@ resource "azurerm_monitor_metric_alert" "cdn_failed_requests" {
   name                = "CDNFailedRequests"
   resource_group_name = var.resource_group_name
   scopes              = [var.cdn_profile_id]
-  description         = "Alert if failed requests > 5% of total (4xx/5xx) in 5 min"
+  description         = "Alert if failed requests > 5% in 5 min"
   severity            = 3
   frequency           = "PT1M"
   window_size         = "PT5M"
@@ -161,7 +112,7 @@ resource "azurerm_monitor_metric_alert" "cdn_failed_requests" {
     metric_name      = "FailedRequests"
     aggregation      = "Average"
     operator         = "GreaterThan"
-    threshold        = 5  # This depends on your exact metric meaning, adjust accordingly
+    threshold        = 5
   }
 
   action {
@@ -169,11 +120,11 @@ resource "azurerm_monitor_metric_alert" "cdn_failed_requests" {
   }
 }
 
-resource "azurerm_monitor_metric_alert" "cdn_response_status" {
-  name                = "CDNResponseStatus"
+resource "azurerm_monitor_metric_alert" "cdn_latency" {
+  name                = "CDNLatency"
   resource_group_name = var.resource_group_name
   scopes              = [var.cdn_profile_id]
-  description         = "Alert if ResponseStatus > 100 in 5 minutes"
+  description         = "Alert if latency > 2000 ms"
   severity            = 3
   frequency           = "PT1M"
   window_size         = "PT5M"
@@ -181,10 +132,10 @@ resource "azurerm_monitor_metric_alert" "cdn_response_status" {
 
   criteria {
     metric_namespace = "Microsoft.Cdn/profiles"
-    metric_name      = "ResponseStatus"
-    aggregation      = "Total"
+    metric_name      = "Latency"
+    aggregation      = "Average"
     operator         = "GreaterThan"
-    threshold        = 100
+    threshold        = 2000
   }
 
   action {
@@ -196,7 +147,7 @@ resource "azurerm_monitor_metric_alert" "cdn_frontend_request_count" {
   name                = "CDNFrontendRequestCount"
   resource_group_name = var.resource_group_name
   scopes              = [var.cdn_profile_id]
-  description         = "Alert if FrontendRequestCount < 0 (Failing) in 5 min"
+  description         = "Alert if FrontendRequestCount < 0"
   severity            = 3
   frequency           = "PT1M"
   window_size         = "PT5M"
@@ -215,11 +166,11 @@ resource "azurerm_monitor_metric_alert" "cdn_frontend_request_count" {
   }
 }
 
-resource "azurerm_monitor_metric_alert" "cdn_latency" {
-  name                = "CDNLatency"
+resource "azurerm_monitor_metric_alert" "cdn_response_status" {
+  name                = "CDNResponseStatus"
   resource_group_name = var.resource_group_name
   scopes              = [var.cdn_profile_id]
-  description         = "Alert if Latency > 2000 ms in 5 minutes"
+  description         = "Alert if ResponseStatus > 100"
   severity            = 3
   frequency           = "PT1M"
   window_size         = "PT5M"
@@ -227,10 +178,10 @@ resource "azurerm_monitor_metric_alert" "cdn_latency" {
 
   criteria {
     metric_namespace = "Microsoft.Cdn/profiles"
-    metric_name      = "Latency"
-    aggregation      = "Average"
+    metric_name      = "ResponseStatus"
+    aggregation      = "Total"
     operator         = "GreaterThan"
-    threshold        = 2000
+    threshold        = 100
   }
 
   action {
