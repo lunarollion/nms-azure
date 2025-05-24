@@ -1,25 +1,21 @@
-variable "location" {
-  description = "Azure region"
-  type        = string
-}
+variable "subscription_id" {}
+variable "client_id" {}
+variable "client_secret" { sensitive = true }
+variable "tenant_id" {}
 
-variable "resource_group_name" {
-  description = "Name of the resource group"
-  type        = string
-}
+variable "resource_group_name" {}
+variable "location" {}
+variable "vnet_name" {}
+variable "vnet_address_space" { type = list(string) }
+variable "subnet_name" {}
+variable "subnet_prefixes" { type = list(string) }
 
-variable "vm_id" {
-  description = "Azure VM Resource ID"
-  type        = string
-}
+variable "vm_name" {}
+variable "vm_size" {}
+variable "admin_username" {}
+variable "admin_password" { sensitive = true }
 
-variable "workspace_id" {
-  description = "Log Analytics Workspace ID"
-  type        = string
-}
+variable "tags" { type = map(string) }
 
-variable "email_receiver" {
-  description = "Email for alert notifications"
-  type        = string
-}
-
+variable "ticket_api_endpoint" { description = "API endpoint for ticketing system" }
+variable "ticket_api_key" { description = "API key for ticketing system", sensitive = true }
