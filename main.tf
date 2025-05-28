@@ -7,3 +7,13 @@ module "monitoring" {
   tags                = var.tags
   alert_email         = "lunar.gultom@ollion.com"
 }
+
+module "monitoring" {
+  source = "./modules/vm_modules"
+
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  virtual_machine_ids = module.vm_infrastructure.virtual_machine_ids
+  tags                = var.tags
+  alert_email         = "lunar.gultom@ollion.com"
+}
