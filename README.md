@@ -2,7 +2,7 @@ Azure Terraform Structure
 ├── main.tf           # Root main file, usually calls modules
 ├── variables.tf
 ├── providers.tf
-├── terraform.tfvars        # <-- your variable values 
+├── terraform.tfvars        # <-- Variable values 
 ├── outputs.tf
 ├── modules/
 │   ├── vm_module/
@@ -13,4 +13,3 @@ Azure Terraform Structure
 │        ├── main.tf           # Monitoring resources (Log Analytics, Diagnostic settings, alerts)
 │        ├── variables.tf
 │        └── outputs.tf
-
