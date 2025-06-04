@@ -3,30 +3,30 @@ client_id         = "YOUR_CLIENT_ID_HERE"
 client_secret     = "YOUR_CLIENT_SECRET_HERE"
 tenant_id         = "YOUR_TENANT_ID_HERE"
 
-resource_group_name = "hyc-windchill-prd-rg"
+resource_group_name = "apac-es-devops-lunar-gultom"
 location            = "southeastasia"
 
 tags = {
-  environment = "production"
-  owner       = "team-hyc"
+  environment = "poc-test"
+  owner       = "poc-hyc"
   project     = "windchill"
 }
 
-vnet_name          = "hyc-windchill-prd-vnet"
-vnet_address_space = ["172.20.0.0/24"]
+vnet_name          = "POC-HYC-vnet"
+vnet_address_space = ["10.0.0.0/16"]
 
 subnets = [
   {
-    name           = "AzureBastionSubnet"
-    address_prefix = "172.20.0.192/26"
+    name           = "default"
+    address_prefix = "10.0.0.0/24"
   },
   {
     name           = "apptier-prd-subnet"
-    address_prefix = "172.20.0.0/25"
+    address_prefix = "10.0.1.0/24"
   },
   {
     name           = "dbtier-prd-subnet"
-    address_prefix = "172.20.0.128/26"
+    address_prefix = "10.0.2.0/24"
   }
 ]
 
@@ -34,14 +34,14 @@ virtual_machines = [
   {
     name           = "vm-01"
     location       = "southeastasia"
-    resource_group = "hyc-windchill-prd-rg"
-    vm_size        = "Standard_B2s"
-    admin_username = "azureuser"
-    admin_password = "ComplexPasswordHere!"
-    subnet_name    = "apptier-prd-subnet"
+    resource_group = "apac-es-devops-lunar-gultom"
+    vm_size        = "Standard_B2als_v2"
+    admin_username = "adminpoc"
+    admin_password = "Jakarta2025!"
+    subnet_name    = "default"
     os_disk = {
-      name                 = "osdisk-vm-01"
-      storage_account_type = "Standard_LRS"
+      name                 = "POC-HYC_OsDisk_1_c412ca30dca8444b95bf4e51b880443e"
+      storage_account_type = "Premium_LRS"
       disk_size_gb         = 30
     }
     data_disks = []
@@ -49,8 +49,8 @@ virtual_machines = [
   }
 ]
 
-# Your Function App and Freshservice variables
-#function_app_name     = "hyc-func-alert-to-freshservice"
-#storage_account_name  = "hycfuncstorage01"
-#freshservice_api_key  = "YOUR_API_KEY"
-#freshservice_domain   = "yourdomain.freshservice.com"
+# Your Function App and Freshservice variables (optional, if used later)
+# function_app_name     = "hyc-func-alert-to-freshservice"
+# storage_account_name  = "hycfuncstorage01"
+# freshservice_api_key  = "YOUR_API_KEY"
+# freshservice_domain   = "yourdomain.freshservice.com"
