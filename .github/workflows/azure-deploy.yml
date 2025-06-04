@@ -42,7 +42,7 @@ jobs:
         run: terraform plan -out=tfplan
 
       - name: Manual Approval Before Apply
-        uses: trstringer/manual-approval@v1
+        uses: trstringer/manual-approval@v2
         with:
           secret: ${{ secrets.GITHUB_TOKEN }}
           approvers: lunar-gultom  # your GitHub username here
