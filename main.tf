@@ -1,19 +1,9 @@
-module "monitoring" {
-  source = "./modules/monitoring_module"
+module "vm_monitoring" {
+  source = "./modules/vm_monitoring"
 
   resource_group_name = var.resource_group_name
   location            = var.location
-  virtual_machine_ids = module.vm_infrastructure.virtual_machine_ids
-  tags                = var.tags
-  alert_email         = "lunar.gultom@ollion.com"
-}
-
-module "monitoring" {
-  source = "./modules/vm_modules"
-
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  virtual_machine_ids = module.vm_infrastructure.virtual_machine_ids
+  vm_id               = "/subscriptions/0e1373c7-d99a-4eaa-9e16-59e648375f9e/resourceGroups/apac-es-devops-lunar-gultom/providers/Microsoft.Compute/virtualMachines/POC-HYC"
   tags                = var.tags
   alert_email         = "lunar.gultom@ollion.com"
 }
