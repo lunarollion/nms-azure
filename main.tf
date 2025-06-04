@@ -1,5 +1,5 @@
-module "vm" {
-  source = "./modules/vm"
+module "vm_modules" {
+  source = "./modules/vm_modules"
   # other vars
 }
 
