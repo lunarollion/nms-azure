@@ -50,7 +50,7 @@ virtual_machines = [
 ]
 
 # Your Function App and Freshservice variables
-function_app_name     = "hyc-func-alert-to-freshservice"
-storage_account_name  = "hycfuncstorage01"
-freshservice_api_key  = "YOUR_API_KEY"
-freshservice_domain   = "yourdomain.freshservice.com"
+#function_app_name     = "hyc-func-alert-to-freshservice"
+#storage_account_name  = "hycfuncstorage01"
+#freshservice_api_key  = "YOUR_API_KEY"
+#freshservice_domain   = "yourdomain.freshservice.com"
