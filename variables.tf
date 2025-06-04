@@ -1,11 +1,14 @@
 variable "subscription_id" {
   type        = string
   description = "Azure Subscription ID"
+  default     = "0e1373c7-d99a-4eaa-9e16-59e648375f9e"
 }
 
 variable "client_id" {
   type        = string
   description = "Azure Client ID"
+  default     = "19b97404-cd9c-4a64-afa9-855f7ae4ca2d"
+
 }
 
 variable "client_secret" {
@@ -17,7 +20,7 @@ variable "client_secret" {
 variable "tenant_id" {
   type        = string
   description = "Azure Tenant ID"
-  default     = "f8d8c41c-a3ff-4e44-abee-8eb6517b2f65"
+  default     = "353846d6-a0d2-400e-8a7a-517a18e30c03"
 }
 
 variable "resource_group_name" {
