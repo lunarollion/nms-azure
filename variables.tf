@@ -11,12 +11,6 @@ variable "client_id" {
 
 }
 
-variable "client_secret" {
-  type        = string
-  description = "Azure Client Secret"
-  sensitive   = true
-}
-
 variable "tenant_id" {
   type        = string
   description = "Azure Tenant ID"
