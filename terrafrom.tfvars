@@ -21,18 +21,18 @@ subnets = [
     address_prefix = "10.0.0.0/24"
   },
   {
-    name           = "apptier-prd-subnet"
+    name           = "default"
     address_prefix = "10.0.1.0/24"
   },
   {
-    name           = "dbtier-prd-subnet"
+    name           = "default"
     address_prefix = "10.0.2.0/24"
   }
 ]
 
 virtual_machines = [
   {
-    name           = "vm-01"
+    name           = "POC-HYC"
     location       = "southeastasia"
     resource_group = "apac-es-devops-lunar-gultom"
     vm_size        = "Standard_B2als_v2"

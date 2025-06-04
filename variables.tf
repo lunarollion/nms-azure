@@ -15,6 +15,7 @@ variable "client_secret" {
   type        = string
   description = "Azure Client Secret"
   sensitive   = true
+  default     = "***REMOVED***"
 }
 
 variable "tenant_id" {
@@ -26,7 +27,7 @@ variable "tenant_id" {
 variable "resource_group_name" {
   type        = string
   description = "Resource group name for VMs"
-  default     = "hyc-windchill-prd-rg"
+  default     = "POC-HYC"
 }
 
 variable "location" {
@@ -44,7 +45,7 @@ variable "tags" {
 variable "vnet_name" {
   type        = string
   description = "Name of the Virtual Network"
-  default     = "hyc-windchill-prd-vnet"
+  default     = "POC-HYC-vnet"
 }
 
 variable "vnet_address_space" {
@@ -58,9 +59,4 @@ variable "subnets" {
     address_prefix = string
   }))
   description = "List of subnets with name and prefix"
-}
-
-variable "freshservice_webhook_url" {
-  type        = string
-  description = "Azure Function URL that creates tickets in Freshservice"
 }
