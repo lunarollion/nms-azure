@@ -15,7 +15,6 @@ variable "client_secret" {
   type        = string
   description = "Azure Client Secret"
   sensitive   = true
-  default     = "***REMOVED***"
 }
 
 variable "tenant_id" {
