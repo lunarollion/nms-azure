@@ -68,17 +68,7 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           ARM_USE_OIDC: "true"
-
-      - name: Manual Approval
-        uses: trstringer/manual-approval@v1
-        with:
-          secret: ${{ secrets.GITHUB_TOKEN }}
-          approvers: lunar-gultom
-          minimum-approvals: 1
-          issue-title: "Terraform Apply Approval"
-          issue-body: "Please review the Terraform plan output above and approve if changes look correct."
-          label: "terraform-approval"
-
+          
       - name: Terraform Apply
         run: terraform apply -input=false -auto-approve tfplan
         env:
