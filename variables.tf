@@ -106,3 +106,34 @@ variable "dns_zone_id" {
   description = "Resource ID of the DNS Zone to monitor (optional)"
   default     = null
 }
+
+
+####################################
+# Subnets
+####################################
+
+
+variable "subnets" {
+  description = "List of subnets to create"
+  type = list(object({
+    name           = string
+    address_prefix = string
+  }))
+}
+
+variable "vnet_name" {
+  description = "Name of the Virtual Network"
+  type        = string
+  default     = "poc-hyc-vnet"
+}
+
+variable "vnet_address_space" {
+  description = "Address space for the Virtual Network"
+  type        = list(string)
+}
+
+variable "network_interface_id" {
+  type        = string
+  description = "The ID of the network interface"
+  default     = "/subscriptions/233e16db-2636-4f3c-8ae7-cdd9678d940b/resourceGroups/poc-hyc/providers/Microsoft.Network/networkInterfaces/poc-hyc542_z2"
+}
