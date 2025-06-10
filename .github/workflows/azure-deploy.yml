@@ -43,6 +43,9 @@ jobs:
             terraform workspace new production
           fi
 
+      - name: Terraform Format
+        run: terraform fmt -recursive
+
       - name: Terraform Format Check
         run: terraform fmt -check -recursive -diff
 

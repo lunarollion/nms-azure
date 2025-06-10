@@ -69,7 +69,7 @@ variable "vm_names" {
   type        = map(string)
   description = "Map of VM names for identification or tagging"
   default     = {
-    "vm1" = "POC-HYC"
+    "vm1" = "poc-hyc"
   }
 }
 
