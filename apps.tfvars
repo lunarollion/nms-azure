@@ -48,17 +48,16 @@ virtual_machines = [
     resource_group = "poc-hyc"
     vm_size        = "Standard_B1s"
     subnet_name    = "subnet1"
-
     os_disk = {
-      name                 = "poc-hyc_OsDisk_1_fe18bb475d6d40d988f6542074de4d67"
+      name                 = "poc-hyc_OsDisk_1"
       storage_account_type = "Premium_LRS"
       disk_size_gb         = 30
     }
-
     data_disks = []
     extensions = []
   }
 ]
+
 
 # ======================
 # IDs
