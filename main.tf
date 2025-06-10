@@ -7,6 +7,7 @@ module "vm_monitoring" {
   cdn_profile_id      = var.cdn_profile_id
   dns_zone_id         = var.dns_zone_id
   vm_names            = var.vm_names
+  virtual_machines    = var.virtual_machines
 
   providers = {
     azurerm = azurerm

@@ -11,6 +11,7 @@ variable "alert_email" {
 variable "tags" {
   type        = map(string)
   description = "Resource tags"
+  default     = {}
 }
 
 variable "vm_id" {
@@ -28,4 +29,29 @@ variable "dns_zone_id" {
   type        = string
   description = "DNS Zone ID"
   default     = null
+}
+
+variable "vm_names" {
+  type        = map(string)
+  description = "Map of VM names for identification or tagging"
+  default     = {}
+}
+
+variable "virtual_machines" {
+  description = "List of virtual machines to monitor"
+  type = list(object({
+    name           = string
+    location       = string
+    resource_group = string
+    vm_size        = string
+    subnet_name    = string
+    os_disk = object({
+      name                 = string
+      storage_account_type = string
+      disk_size_gb         = number
+    })
+    data_disks  = list(any)
+    extensions  = list(any)
+  }))
+  default = []
 }
