@@ -1,5 +1,5 @@
 subscription_id   = "d68c21d0-1b10-408a-b2cb-8d7c4580a42c"
-client_id         = "19b97404-cd9c-4a64-afa9-855f7ae4ca2d
+client_id         = "19b97404-cd9c-4a64-afa9-855f7ae4ca2d"
 tenant_id         = "353846d6-a0d2-400e-8a7a-517a18e30c03"
 resource_group_name = "apac-es-devops-lunar-gultom"
 location            = "southeastasia"
@@ -15,15 +15,15 @@ vnet_address_space = ["10.0.0.0/16"]
 
 subnets = [
   {
-    name           = "default"
+    name           = "subnet1"
     address_prefix = "10.0.0.0/24"
   },
   {
-    name           = "default"
+    name           = "subnet2"
     address_prefix = "10.0.1.0/24"
   },
   {
-    name           = "default"
+    name           = "subnet3"
     address_prefix = "10.0.2.0/24"
   }
 ]

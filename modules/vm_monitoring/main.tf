@@ -7,14 +7,14 @@ resource "azurerm_monitor_action_group" "poc_alert" {
     name                    = "default-email"
     email_address           = var.alert_email
     use_common_alert_schema = true
-    default                 ="lunar.gultom@ollion.com"
   }
 
   tags = var.tags
 }
 
+# Alert: High CPU on VM
 resource "azurerm_monitor_metric_alert" "high_cpu_alert" {
-  name                = "HighCPUAlert"
+  name                = "high_cpu_alert"
   resource_group_name = var.resource_group_name
   scopes              = [var.vm_id]
   description         = "Alert when CPU usage exceeds 10%"
@@ -37,8 +37,10 @@ resource "azurerm_monitor_metric_alert" "high_cpu_alert" {
   }
 }
 
+# Alert: DNS Query Failure
 resource "azurerm_monitor_metric_alert" "dns_query_failure" {
-  name                = "DNSQueryFailureCount"
+  count               = var.dns_zone_id == null ? 0 : 1
+  name                = "dns_query_failure"
   resource_group_name = var.resource_group_name
   scopes              = [var.dns_zone_id]
   description         = "Alert if DNS QueryFailureCount > 5 in 5 minutes"
@@ -60,8 +62,10 @@ resource "azurerm_monitor_metric_alert" "dns_query_failure" {
   }
 }
 
+# Alert: CDN 5xx errors (count + percentage)
 resource "azurerm_monitor_metric_alert" "cdn_http_5xx" {
-  name                = "CDNHttpStatusCodeCount5xx"
+  count               = var.cdn_profile_id == null ? 0 : 1
+  name                = "cdn_http_5xx"
   resource_group_name = var.resource_group_name
   scopes              = [var.cdn_profile_id]
   description         = "Alert if 5xx status codes > 1% or > 50 per minute"
@@ -99,11 +103,13 @@ resource "azurerm_monitor_metric_alert" "cdn_http_5xx" {
   }
 }
 
+# Alert: Failed CDN Requests
 resource "azurerm_monitor_metric_alert" "cdn_failed_requests" {
-  name                = "CDNFailedRequests"
+  count               = var.cdn_profile_id == null ? 0 : 1
+  name                = "cdn_failed_requests"
   resource_group_name = var.resource_group_name
   scopes              = [var.cdn_profile_id]
-  description         = "Alert if failed requests > 5% in 5 min"
+  description         = "Alert if failed requests > 5 in 5 min"
   severity            = 3
   frequency           = "PT1M"
   window_size         = "PT5M"
@@ -122,8 +128,10 @@ resource "azurerm_monitor_metric_alert" "cdn_failed_requests" {
   }
 }
 
+# Alert: CDN Latency
 resource "azurerm_monitor_metric_alert" "cdn_latency" {
-  name                = "CDNLatency"
+  count               = var.cdn_profile_id == null ? 0 : 1
+  name                = "cdn_latency"
   resource_group_name = var.resource_group_name
   scopes              = [var.cdn_profile_id]
   description         = "Alert if latency > 2000 ms"
@@ -145,8 +153,10 @@ resource "azurerm_monitor_metric_alert" "cdn_latency" {
   }
 }
 
+# Alert: Frontend Request Count
 resource "azurerm_monitor_metric_alert" "cdn_frontend_request_count" {
-  name                = "CDNFrontendRequestCount"
+  count               = var.cdn_profile_id == null ? 0 : 1
+  name                = "cdn_frontend_request_count"
   resource_group_name = var.resource_group_name
   scopes              = [var.cdn_profile_id]
   description         = "Alert if FrontendRequestCount < 0"
@@ -168,8 +178,10 @@ resource "azurerm_monitor_metric_alert" "cdn_frontend_request_count" {
   }
 }
 
+# Alert: Response Status (custom)
 resource "azurerm_monitor_metric_alert" "cdn_response_status" {
-  name                = "CDNResponseStatus"
+  count               = var.cdn_profile_id == null ? 0 : 1
+  name                = "cdn_response_status"
   resource_group_name = var.resource_group_name
   scopes              = [var.cdn_profile_id]
   description         = "Alert if ResponseStatus > 100"

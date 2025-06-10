@@ -1,25 +1,6 @@
-variable "subscription_id" {
-  type        = string
-  description = "Azure Subscription ID"
-  default     = "0e1373c7-d99a-4eaa-9e16-59e648375f9e"
-}
-
-variable "client_id" {
-  type        = string
-  description = "Azure Client ID"
-  default     = "19b97404-cd9c-4a64-afa9-855f7ae4ca2d"
-
-}
-
-variable "tenant_id" {
-  type        = string
-  description = "Azure Tenant ID"
-  default     = "353846d6-a0d2-400e-8a7a-517a18e30c03"
-}
-
 variable "resource_group_name" {
   type        = string
-  description = "Resource group name for VMs"
+  description = "Resource group name for all monitored resources"
   default     = "POC-HYC"
 }
 
@@ -35,38 +16,39 @@ variable "tags" {
   default     = {}
 }
 
-variable "alert_email00" {
-  description = "The email address to receive alert notifications."
+variable "alert_email" {
   type        = string
+  description = "The email address to receive alert notifications"
   default     = "lunar.gultom@ollion.com"
 }
 
 variable "vm_id" {
-  description = "The ID of the virtual machine to monitor."
   type        = string
-  default     = "50957879-1af4-449b-9375-3a499f29aa94"
+  description = "The resource ID of the virtual machine to monitor"
+  default     = "/subscriptions/0e1373c7-d99a-4eaa-9e16-59e648375f9e/resourceGroups/apac-es-devops-lunar-gultom/providers/Microsoft.Compute/virtualMachines/POC-HYC"
 }
 
 variable "cdn_profile_id" {
-  description = "The resource ID of the Azure CDN profile to monitor. Leave blank if not using CDN alerts."
   type        = string
+  description = "The resource ID of the Azure CDN profile to monitor. Leave as null if not used"
   default     = null
 }
 
 variable "dns_zone_id" {
-  description = "The resource ID of the DNS Zone to monitor. Leave blank if not using DNS alerts."
   type        = string
+  description = "The resource ID of the DNS Zone to monitor. Leave as null if not used"
   default     = null
 }
 
 variable "vm_names" {
-  description = "Map of VM names"
   type        = map(string)
+  description = "Map of VM names (if needed for identification, logs, etc.)"
   default     = {
     "vm1" = "POC-HYC"
   }
-
 }
 
-
-
+variable "subscription_id" {
+  type        = string
+  description = "Azure Subscription ID"
+}
