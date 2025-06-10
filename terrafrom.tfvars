@@ -1,8 +1,8 @@
-subscription_id   = "d68c21d0-1b10-408a-b2cb-8d7c4580a42c"
-client_id         = "19b97404-cd9c-4a64-afa9-855f7ae4ca2d"
-tenant_id         = "353846d6-a0d2-400e-8a7a-517a18e30c03"
+subscription_id = "0e1373c7-d99a-4eaa-9e16-59e648375f9e"
+tenant_id       = "353846d6-a0d2-400e-8a7a-517a18e30c03"
+client_id       = "19b97404-cd9c-4a64-afa9-855f7ae4ca2d"
 resource_group_name = "apac-es-devops-lunar-gultom"
-location            = "southeastasia"
+location            = "eastus"
 
 tags = {
   environment = "poc"

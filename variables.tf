@@ -7,7 +7,28 @@ variable "resource_group_name" {
 variable "location" {
   type        = string
   description = "Azure region"
-  default     = "southeastasia"
+  default     = "eastus"
+}
+
+variable "client_id" {
+  type        = string
+  description = "Azure client ID for OIDC (App Registration)"
+}
+
+variable "tenant_id" {
+  type        = string
+  description = "Azure tenant ID for OIDC"
+}
+
+variable "subscription_id" {
+  type        = string
+  description = "Azure Subscription ID"
+}
+
+variable "client_secret" {
+  type        = string
+  default     = ""
+  description = "Azure client secret (used only when not using OIDC)"
 }
 
 variable "tags" {
@@ -46,9 +67,4 @@ variable "vm_names" {
   default     = {
     "vm1" = "POC-HYC"
   }
-}
-
-variable "subscription_id" {
-  type        = string
-  description = "Azure Subscription ID"
 }
