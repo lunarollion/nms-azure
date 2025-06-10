@@ -38,8 +38,7 @@ variable "vm_names" {
 }
 
 variable "virtual_machines" {
-  description = "List of virtual machines to monitor"
-  type = list(object({
+  type        = list(object({
     name           = string
     location       = string
     resource_group = string
@@ -50,8 +49,10 @@ variable "virtual_machines" {
       storage_account_type = string
       disk_size_gb         = number
     })
-    data_disks  = list(any)
-    extensions  = list(any)
+    data_disks = list(any)
+    extensions = list(any)
   }))
-  default = []
+  description = "List of virtual machines to monitor"
+  default     = []
 }
+
