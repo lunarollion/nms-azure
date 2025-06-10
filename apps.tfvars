@@ -1,7 +1,7 @@
 # Azure Auth
-subscription_id     = "0e1373c7-d99a-4eaa-9e16-59e648375f9e"
-tenant_id           = "353846d6-a0d2-400e-8a7a-517a18e30c03"
-client_id           = "19b97404-cd9c-4a64-afa9-855f7ae4ca2d"
+subscription_id     = "233e16db-2636-4f3c-8ae7-cdd9678d940b"
+tenant_id           = "c2527675-3255-43a3-97c4-670a9c20d5c8"
+client_id           = "9e9bbc03-edc2-493c-986d-610e52a70682"
 
 # Azure Infra
 resource_group_name = "apac-es-devops-lunar-gultom"
