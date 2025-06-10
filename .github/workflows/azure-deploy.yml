@@ -10,7 +10,7 @@ jobs:
     name: Terraform Workflow with OIDC & Approval
     runs-on: ubuntu-latest
     environment:
-      name: poc-hyc
+      name: production
 
     permissions:
       id-token: write
