@@ -1,6 +1,5 @@
 subscription_id   = "d68c21d0-1b10-408a-b2cb-8d7c4580a42c"
 client_id         = "19b97404-cd9c-4a64-afa9-855f7ae4ca2d"
-client_secret     = "i1g8Q~6QboA5gMOCacRFugMfi2ygLNQ.PIN6ubKg"
 tenant_id         = "353846d6-a0d2-400e-8a7a-517a18e30c03"
 
 resource_group_name = "apac-es-devops-lunar-gultom"
