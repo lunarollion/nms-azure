@@ -1,15 +1,15 @@
 subscription_id   = "d68c21d0-1b10-408a-b2cb-8d7c4580a42c"
-client_id         = "YOUR_CLIENT_ID_HERE"
-client_secret     = "YOUR_CLIENT_SECRET_HERE"
-tenant_id         = "YOUR_TENANT_ID_HERE"
+client_id         = "19b97404-cd9c-4a64-afa9-855f7ae4ca2d"
+client_secret     = "i1g8Q~6QboA5gMOCacRFugMfi2ygLNQ.PIN6ubKg"
+tenant_id         = "353846d6-a0d2-400e-8a7a-517a18e30c03"
 
 resource_group_name = "apac-es-devops-lunar-gultom"
 location            = "southeastasia"
 
 tags = {
-  environment = "poc-test"
+  environment = "poc"
   owner       = "poc-hyc"
-  project     = "windchill"
+  project     = "poc-monitoring"
 }
 
 vnet_name          = "POC-HYC-vnet"
@@ -36,8 +36,6 @@ virtual_machines = [
     location       = "southeastasia"
     resource_group = "apac-es-devops-lunar-gultom"
     vm_size        = "Standard_B2als_v2"
-    admin_username = "adminpoc"
-    admin_password = "Jakarta2025!"
     subnet_name    = "default"
     os_disk = {
       name                 = "POC-HYC_OsDisk_1_c412ca30dca8444b95bf4e51b880443e"
@@ -48,6 +46,10 @@ virtual_machines = [
     extensions = []
   }
 ]
+
+vm_id = "/subscriptions/0e1373c7-d99a-4eaa-9e16-59e648375f9e/resourceGroups/apac-es-devops-lunar-gultom/providers/Microsoft.Compute/virtualMachines/POC-HYC"
+network_interface_id = "/subscriptions/0e1373c7-d99a-4eaa-9e16-59e648375f9e/resourceGroups/apac-es-devops-lunar-gultom/providers/Microsoft.Network/networkInterfaces/poc-hyc629_z1"
+
 
 # Your Function App and Freshservice variables (optional, if used later)
 # function_app_name     = "hyc-func-alert-to-freshservice"

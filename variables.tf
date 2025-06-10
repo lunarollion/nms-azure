@@ -35,21 +35,38 @@ variable "tags" {
   default     = {}
 }
 
-variable "vnet_name" {
+variable "alert_email00" {
+  description = "The email address to receive alert notifications."
   type        = string
-  description = "Name of the Virtual Network"
-  default     = "POC-HYC-vnet"
+  default     = "lunar.gultom@ollion.com"
 }
 
-variable "vnet_address_space" {
-  type        = list(string)
-  description = "Address space for the Virtual Network"
+variable "vm_id" {
+  description = "The ID of the virtual machine to monitor."
+  type        = string
+  default     = "50957879-1af4-449b-9375-3a499f29aa94"
 }
 
-variable "subnets" {
-  type = list(object({
-    name           = string
-    address_prefix = string
-  }))
-  description = "List of subnets with name and prefix"
+variable "cdn_profile_id" {
+  description = "The resource ID of the Azure CDN profile to monitor. Leave blank if not using CDN alerts."
+  type        = string
+  default     = null
 }
+
+variable "dns_zone_id" {
+  description = "The resource ID of the DNS Zone to monitor. Leave blank if not using DNS alerts."
+  type        = string
+  default     = null
+}
+
+variable "vm_names" {
+  description = "Map of VM names"
+  type        = map(string)
+  default     = {
+    "vm1" = "POC-HYC"
+  }
+
+}
+
+
+

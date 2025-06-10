@@ -1,3 +1,4 @@
 output "vm_id" {
-  value = azurerm_virtual_machine.example.id 
+  description = "The ID of the virtual machine."
+  value       = azurerm_windows_virtual_machine.example.id
 }
