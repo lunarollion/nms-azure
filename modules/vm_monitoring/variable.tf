@@ -1,39 +1,31 @@
 variable "resource_group_name" {
-  description = "The name of the resource group in which resources will be created."
   type        = string
+  description = "Name of the resource group"
 }
 
 variable "alert_email" {
-  description = "The email address to receive alert notifications."
   type        = string
-  default     = "lunar.gultom@ollion.com"
-}
-
-variable "vm_id" {
-  description = "The resource ID of the virtual machine to monitor."
-  type        = string
-    default     = "50957879-1af4-449b-9375-3a499f29aa94"
+  description = "Email for alert notification"
 }
 
 variable "tags" {
-  description = "A map of tags to assign to the resources."
   type        = map(string)
-  default     = {}
+  description = "Resource tags"
+}
+
+variable "vm_id" {
+  type        = string
+  description = "ID of the virtual machine"
 }
 
 variable "cdn_profile_id" {
-  description = "The resource ID of the Azure CDN profile to monitor. Leave blank if not using CDN alerts."
   type        = string
+  description = "CDN Profile ID"
   default     = null
 }
 
 variable "dns_zone_id" {
-  description = "The resource ID of the DNS Zone to monitor. Leave blank if not using DNS alerts."
   type        = string
+  description = "DNS Zone ID"
   default     = null
-}
-
-variable "vm_names" {
-  description = "Map of VM names"
-  type        = map(string)
 }

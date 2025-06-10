@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">= 3.0"
+    }
+  }
+}
+
 resource "azurerm_monitor_action_group" "poc_alert" {
   name                = "POCAutomateAlert"
   resource_group_name = var.resource_group_name
@@ -12,7 +21,9 @@ resource "azurerm_monitor_action_group" "poc_alert" {
   tags = var.tags
 }
 
-# Alert: High CPU on VM
+#####################################
+# VM Alert - High CPU
+#####################################
 resource "azurerm_monitor_metric_alert" "high_cpu_alert" {
   name                = "high_cpu_alert"
   resource_group_name = var.resource_group_name
@@ -37,9 +48,11 @@ resource "azurerm_monitor_metric_alert" "high_cpu_alert" {
   }
 }
 
-# Alert: DNS Query Failure
+#####################################
+# DNS Zone - Query Failures
+#####################################
 resource "azurerm_monitor_metric_alert" "dns_query_failure" {
-  count               = var.dns_zone_id == null ? 0 : 1
+  count               = var.dns_zone_id != null ? 1 : 0
   name                = "dns_query_failure"
   resource_group_name = var.resource_group_name
   scopes              = [var.dns_zone_id]
@@ -62,9 +75,12 @@ resource "azurerm_monitor_metric_alert" "dns_query_failure" {
   }
 }
 
-# Alert: CDN 5xx errors (count + percentage)
+#####################################
+# CDN Alerts (Conditional)
+#####################################
+# CDN 5xx Errors - Total & Percentage
 resource "azurerm_monitor_metric_alert" "cdn_http_5xx" {
-  count               = var.cdn_profile_id == null ? 0 : 1
+  count               = var.cdn_profile_id != null ? 1 : 0
   name                = "cdn_http_5xx"
   resource_group_name = var.resource_group_name
   scopes              = [var.cdn_profile_id]
@@ -103,9 +119,9 @@ resource "azurerm_monitor_metric_alert" "cdn_http_5xx" {
   }
 }
 
-# Alert: Failed CDN Requests
+# CDN Failed Requests
 resource "azurerm_monitor_metric_alert" "cdn_failed_requests" {
-  count               = var.cdn_profile_id == null ? 0 : 1
+  count               = var.cdn_profile_id != null ? 1 : 0
   name                = "cdn_failed_requests"
   resource_group_name = var.resource_group_name
   scopes              = [var.cdn_profile_id]
@@ -128,9 +144,9 @@ resource "azurerm_monitor_metric_alert" "cdn_failed_requests" {
   }
 }
 
-# Alert: CDN Latency
+# CDN Latency
 resource "azurerm_monitor_metric_alert" "cdn_latency" {
-  count               = var.cdn_profile_id == null ? 0 : 1
+  count               = var.cdn_profile_id != null ? 1 : 0
   name                = "cdn_latency"
   resource_group_name = var.resource_group_name
   scopes              = [var.cdn_profile_id]
@@ -153,13 +169,13 @@ resource "azurerm_monitor_metric_alert" "cdn_latency" {
   }
 }
 
-# Alert: Frontend Request Count
+# CDN Frontend Request Count
 resource "azurerm_monitor_metric_alert" "cdn_frontend_request_count" {
-  count               = var.cdn_profile_id == null ? 0 : 1
+  count               = var.cdn_profile_id != null ? 1 : 0
   name                = "cdn_frontend_request_count"
   resource_group_name = var.resource_group_name
   scopes              = [var.cdn_profile_id]
-  description         = "Alert if FrontendRequestCount < 0"
+  description         = "Alert if FrontendRequestCount < 0 (invalid)"
   severity            = 3
   frequency           = "PT1M"
   window_size         = "PT5M"
@@ -178,9 +194,9 @@ resource "azurerm_monitor_metric_alert" "cdn_frontend_request_count" {
   }
 }
 
-# Alert: Response Status (custom)
+# CDN Custom Metric - Response Status
 resource "azurerm_monitor_metric_alert" "cdn_response_status" {
-  count               = var.cdn_profile_id == null ? 0 : 1
+  count               = var.cdn_profile_id != null ? 1 : 0
   name                = "cdn_response_status"
   resource_group_name = var.resource_group_name
   scopes              = [var.cdn_profile_id]
