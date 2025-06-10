@@ -56,6 +56,7 @@ jobs:
         run: |
           terraform plan \
             -input=false \
+            -var=-var-file \
             -var="client_id=${{ secrets.ARM_CLIENT_ID }}" \
             -var="tenant_id=${{ secrets.ARM_TENANT_ID }}" \
             -var="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" \
