@@ -2,25 +2,21 @@
 # Azure Authentication & OIDC
 ####################################
 
-variable "use_oidc" {
-  type        = bool
-  description = "Whether to use OIDC for Azure authentication"
-  default     = true
-}
-
-variable "client_id" {
-  type        = string
-  description = "Azure client ID (App Registration)"
+variable "subscription_id" {
+  type = string
 }
 
 variable "tenant_id" {
-  type        = string
-  description = "Azure tenant ID"
+  type = string
 }
 
-variable "subscription_id" {
-  type        = string
-  description = "Azure Subscription ID"
+variable "client_id" {
+  type = string
+}
+
+variable "use_oidc" {
+  type    = bool
+  default = false
 }
 
 ####################################
