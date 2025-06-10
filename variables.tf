@@ -1,13 +1,7 @@
-variable "resource_group_name" {
-  type        = string
-  description = "Resource group name for all monitored resources"
-  default     = "POC-HYC"
-}
-
-variable "location" {
-  type        = string
-  description = "Azure region"
-  default     = "eastus"
+variable "use_oidc" {
+  type        = bool
+  description = "Whether to use OIDC for Azure auth"
+  default     = true
 }
 
 variable "client_id" {
@@ -25,10 +19,17 @@ variable "subscription_id" {
   description = "Azure Subscription ID"
 }
 
-variable "client_secret" {
+
+variable "resource_group_name" {
   type        = string
-  default     = ""
-  description = "Azure client secret (used only when not using OIDC)"
+  description = "Resource group name for all monitored resources"
+  default     = "POC-HYC"
+}
+
+variable "location" {
+  type        = string
+  description = "Azure region"
+  default     = "eastus"
 }
 
 variable "tags" {
