@@ -1,6 +1,9 @@
-subscription_id = "0e1373c7-d99a-4eaa-9e16-59e648375f9e"
-tenant_id       = "353846d6-a0d2-400e-8a7a-517a18e30c03"
-client_id       = "19b97404-cd9c-4a64-afa9-855f7ae4ca2d"
+# Azure Auth
+subscription_id     = "0e1373c7-d99a-4eaa-9e16-59e648375f9e"
+tenant_id           = "353846d6-a0d2-400e-8a7a-517a18e30c03"
+client_id           = "19b97404-cd9c-4a64-afa9-855f7ae4ca2d"
+
+# Azure Infra
 resource_group_name = "apac-es-devops-lunar-gultom"
 location            = "eastus"
 
@@ -10,6 +13,7 @@ tags = {
   project     = "poc-monitoring"
 }
 
+# VNet
 vnet_name          = "POC-HYC-vnet"
 vnet_address_space = ["10.0.0.0/16"]
 
@@ -28,28 +32,29 @@ subnets = [
   }
 ]
 
+# VM Info
 virtual_machines = [
   {
     name           = "POC-HYC"
-    location       = "southeastasia"
+    location       = "southeastasia" # Intentional region override
     resource_group = "apac-es-devops-lunar-gultom"
     vm_size        = "Standard_B2als_v2"
-    subnet_name    = "default"
+    subnet_name    = "subnet1"  # Changed from "default" to match defined subnets
     os_disk = {
       name                 = "POC-HYC_OsDisk_1_c412ca30dca8444b95bf4e51b880443e"
       storage_account_type = "Premium_LRS"
       disk_size_gb         = 30
     }
-    data_disks = []
-    extensions = []
+    data_disks  = []
+    extensions  = []
   }
 ]
 
 vm_id = "/subscriptions/0e1373c7-d99a-4eaa-9e16-59e648375f9e/resourceGroups/apac-es-devops-lunar-gultom/providers/Microsoft.Compute/virtualMachines/POC-HYC"
+
 network_interface_id = "/subscriptions/0e1373c7-d99a-4eaa-9e16-59e648375f9e/resourceGroups/apac-es-devops-lunar-gultom/providers/Microsoft.Network/networkInterfaces/poc-hyc629_z1"
 
-
-# Your Function App and Freshservice variables (optional, if used later)
+# Optional Freshservice integration variables (uncomment and fill if used)
 # function_app_name     = "hyc-func-alert-to-freshservice"
 # storage_account_name  = "hycfuncstorage01"
 # freshservice_api_key  = "YOUR_API_KEY"
