@@ -42,17 +42,6 @@ variable "virtual_machines" {
     name           = string
     location       = string
     resource_group = string
-    vm_size        = string
-    subnet_name    = string
-    os_disk = object({
-      name                 = string
-      storage_account_type = string
-      disk_size_gb         = number
-    })
-    data_disks = list(any)
-    extensions = list(any)
   }))
-  description = "List of virtual machines to monitor"
-  default     = []
 }
 
