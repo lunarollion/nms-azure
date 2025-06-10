@@ -1,9 +1,7 @@
 provider "azurerm" {
-  features {}
-
+  features = {}
+  use_oidc = var.use_oidc
+  client_id = var.client_id
+  tenant_id = var.tenant_id
   subscription_id = var.subscription_id
-  tenant_id       = var.tenant_id
-  client_id       = var.client_id
-
-  client_secret   = var.use_oidc ? null : var.client_secret
 }
