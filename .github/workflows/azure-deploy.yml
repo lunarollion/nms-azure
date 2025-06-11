@@ -1,6 +1,9 @@
-name: Terraform Deploy or Destroy
+name: Terraform Deployment
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       customer:
@@ -27,16 +30,24 @@ on:
 
 jobs:
   terraform:
+    name: Terraform Workflow with OIDC & Manual Inputs
     runs-on: ubuntu-latest
+
     permissions:
       id-token: write
       contents: read
 
+    env:
+      TF_IN_AUTOMATION: true
+      CUSTOMER: ${{ github.event.inputs.customer || 'hyc' }}
+      ENVIRONMENT: ${{ github.event.inputs.environment || 'prod' }}
+      ACTION: ${{ github.event.inputs.action || 'apply' }}
+
     steps:
-      - name: Checkout Code
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Azure Login with OIDC
+      - name: Azure Login via OIDC
         uses: azure/login@v1
         with:
           client-id: ${{ secrets.ARM_CLIENT_ID }}
@@ -53,35 +64,29 @@ jobs:
       - name: Terraform Init
         run: terraform init -input=false
 
-      - name: Select or Create Workspace
+      - name: Handle Workspace
         run: |
-          WORKSPACE="${{ github.event.inputs.customer }}-${{ github.event.inputs.environment }}"
+          WORKSPACE="${CUSTOMER}-${ENVIRONMENT}"
           if terraform workspace list | grep -q "$WORKSPACE"; then
             terraform workspace select "$WORKSPACE"
           else
             terraform workspace new "$WORKSPACE"
           fi
 
-      - name: Terraform Plan or Destroy
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive -diff
+
+      - name: Terraform Validate
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
         run: |
-          ACTION=${{ github.event.inputs.action }}
-          TFVARS="customer/${{ github.event.inputs.customer }}.tfvars"
-
-          if [ "$ACTION" == "apply" ]; then
-            terraform plan -input=false -var-file="$TFVARS" -out=tfplan
-          else
+          TFVARS="customer/${CUSTOMER}.tfvars"
+          if [ "$ACTION" = "destroy" ]; then
             terraform plan -destroy -input=false -var-file="$TFVARS" -out=tfplan
+          else
+            terraform plan -input=false -var-file="$TFVARS" -out=tfplan
           fi
-        env:
-          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-          ARM_USE_OIDC: "true"
 
-      - name: Terraform Apply or Destroy
+      - name: Terraform Apply/Destroy
         run: terraform apply -input=false -auto-approve tfplan
-        env:
-          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-          ARM_USE_OIDC: "true"
