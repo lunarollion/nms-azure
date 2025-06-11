@@ -39,9 +39,9 @@ jobs:
 
     env:
       TF_IN_AUTOMATION: true
-      CUSTOMER: ${{ github.event.inputs.customer || 'hyc' }}
-      ENVIRONMENT: ${{ github.event.inputs.environment || 'prod' }}
-      ACTION: ${{ github.event.inputs.action || 'apply' }}
+      CUSTOMER: ${{ github.event.inputs.customer }}
+      ENVIRONMENT: ${{ github.event.inputs.environment }}
+      ACTION: ${{ github.event.inputs.action }}
 
     steps:
       - name: Checkout Repository
@@ -88,5 +88,10 @@ jobs:
             terraform plan -input=false -var-file="$TFVARS" -out=tfplan
           fi
 
-      - name: Terraform Apply/Destroy
-        run: terraform apply -input=false -auto-approve tfplan
+      - name: Terraform Apply or Destroy
+        run: |
+          if [ "$ACTION" = "destroy" ]; then
+            terraform apply -input=false -auto-approve tfplan
+          else
+            terraform apply -input=false -auto-approve tfplan
+          fi
