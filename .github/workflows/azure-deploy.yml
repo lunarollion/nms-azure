@@ -11,21 +11,13 @@ on:
           - hyc
           - stttelemedia
 
-      environment:
-        description: 'Select the environment'
+      action:
+        description: 'Select action to perform'
         required: true
         type: choice
         options:
-          - Dev
-          - Prod
-
-      destroy:
-        description: 'Destroy resources?'
-        required: true
-        type: choice
-        options:
-          - false
-          - true
+          - apply
+          - destroy
 
 jobs:
   terraform:
@@ -57,20 +49,20 @@ jobs:
       - name: Terraform Init
         run: terraform init -input=false
 
-      - name: Handle Terraform Workspace
+      - name: Select Workspace
         run: |
-          WORKSPACE="${{ github.event.inputs.customer }}-${{ github.event.inputs.environment | toLower }}"
+          WORKSPACE="${{ github.event.inputs.customer }}"
           if terraform workspace list | grep -q "$WORKSPACE"; then
             terraform workspace select "$WORKSPACE"
           else
             terraform workspace new "$WORKSPACE"
           fi
 
-      - name: Terraform Plan (Apply or Destroy)
+      - name: Terraform Plan & Save
         run: |
-          VAR_FILE="customer/${{ github.event.inputs.customer }}/${{ github.event.inputs.environment | toLower }}.tfvars"
+          VAR_FILE="customer/${{ github.event.inputs.customer }}.tfvars"
 
-          if [ "${{ github.event.inputs.destroy }}" == "true" ]; then
+          if [ "${{ github.event.inputs.action }}" == "destroy" ]; then
             terraform plan -destroy -input=false -var-file="$VAR_FILE" \
               -var="client_id=${{ secrets.ARM_CLIENT_ID }}" \
               -var="tenant_id=${{ secrets.ARM_TENANT_ID }}" \
@@ -86,10 +78,10 @@ jobs:
               -out=tfplan
           fi
 
-      - name: Terraform Apply (Skip if Destroy)
-        if: ${{ github.event.inputs.destroy == 'false' }}
+      - name: Terraform Apply (only if action is apply)
+        if: ${{ github.event.inputs.action == 'apply' }}
         run: terraform apply -input=false -auto-approve tfplan
 
-      - name: Terraform Destroy (Skip if Apply)
-        if: ${{ github.event.inputs.destroy == 'true' }}
+      - name: Terraform Destroy (only if action is destroy)
+        if: ${{ github.event.inputs.action == 'destroy' }}
         run: terraform apply -auto-approve tfplan
