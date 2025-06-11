@@ -38,7 +38,7 @@ variable "vm_names" {
 }
 
 variable "virtual_machines" {
-  type        = list(object({
+  type = list(object({
     name           = string
     location       = string
     resource_group = string

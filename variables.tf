@@ -42,7 +42,7 @@ variable "location" {
 variable "tags" {
   type        = map(string)
   description = "Tags to apply to all resources"
-  default     = {
+  default = {
     environment = "poc"
     owner       = "poc-hyc"
     project     = "poc-monitoring"
@@ -68,7 +68,7 @@ variable "vm_id" {
 variable "vm_names" {
   type        = map(string)
   description = "Map of VM names for identification or tagging"
-  default     = {
+  default = {
     "vm1" = "poc-hyc"
   }
 }
