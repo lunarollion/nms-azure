@@ -39,9 +39,9 @@ jobs:
 
     env:
       TF_IN_AUTOMATION: true
-      CUSTOMER: ${{ github.event.inputs.customer }}
-      ENVIRONMENT: ${{ github.event.inputs.environment }}
-      ACTION: ${{ github.event.inputs.action }}
+      CUSTOMER: ${{ github.event.inputs.customer || 'hyc' }}
+      ENVIRONMENT: ${{ github.event.inputs.environment || 'prod' }}
+      ACTION: ${{ github.event.inputs.action || 'apply' }}
 
     steps:
       - name: Checkout Repository
@@ -96,5 +96,3 @@ jobs:
           else
             terraform apply -input=false -auto-approve tfplan
           fi
-
-
