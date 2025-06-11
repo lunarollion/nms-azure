@@ -30,7 +30,7 @@ on:
 
 jobs:
   terraform:
-    name: Terraform Workflow with OIDC & Manual Inputs
+    name: Azure Workflow
     runs-on: ubuntu-latest
 
     permissions:
