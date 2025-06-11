@@ -1,24 +1,32 @@
+name: Terraform CI/CD
+
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      customer:
+        description: 'Customer name (e.g., hyc, stttelemedia)'
+        required: true
+      environment:
+        description: 'Environment (Dev or Prod)'
+        required: true
+      destroy:
+        description: 'Destroy resources? (true or false)'
+        required: true
 
 jobs:
   terraform:
-    name: Terraform Workflow with OIDC & Approval
+    name: Terraform with OIDC
     runs-on: ubuntu-latest
-    environment:
-      name: production
 
     permissions:
-      id-token: write  # Required for OIDC
+      id-token: write
       contents: read
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Login to Azure via OIDC
+      - name: Azure Login with OIDC
         uses: azure/login@v1
         with:
           client-id: ${{ secrets.ARM_CLIENT_ID }}
@@ -35,44 +43,39 @@ jobs:
       - name: Terraform Init
         run: terraform init -input=false
 
-      - name: Handle Workspace
+      - name: Handle Terraform Workspace
         run: |
-          if terraform workspace list | grep -q 'production'; then
-            terraform workspace select production
+          WORKSPACE="${{ github.event.inputs.customer }}-${{ github.event.inputs.environment | toLower }}"
+          if terraform workspace list | grep -q "$WORKSPACE"; then
+            terraform workspace select "$WORKSPACE"
           else
-            terraform workspace new production
+            terraform workspace new "$WORKSPACE"
           fi
 
-      - name: Terraform Format
-        run: terraform fmt -recursive
-
-      - name: Terraform Format Check
-        run: terraform fmt -check -recursive -diff
-
-      - name: Terraform Validate
-        run: terraform validate -no-color
-
-      - name: Terraform Plan
+      - name: Terraform Plan (Apply or Destroy)
         run: |
-          terraform plan \
-            -input=false \
-            -var-file="apps.tfvars" \
-            -var="client_id=${{ secrets.ARM_CLIENT_ID }}" \
-            -var="tenant_id=${{ secrets.ARM_TENANT_ID }}" \
-            -var="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" \
-            -var="use_oidc=true" \
-            -out=tfplan
-          
-        env:
-          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-          ARM_USE_OIDC: "true"
-          
-      - name: Terraform Apply
+          VAR_FILE="customer/${{ github.event.inputs.customer }}/${{ github.event.inputs.environment | toLower }}.tfvars"
+
+          if [ "${{ github.event.inputs.destroy }}" == "true" ]; then
+            terraform plan -destroy -input=false -var-file="$VAR_FILE" \
+              -var="client_id=${{ secrets.ARM_CLIENT_ID }}" \
+              -var="tenant_id=${{ secrets.ARM_TENANT_ID }}" \
+              -var="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" \
+              -var="use_oidc=true" \
+              -out=tfplan
+          else
+            terraform plan -input=false -var-file="$VAR_FILE" \
+              -var="client_id=${{ secrets.ARM_CLIENT_ID }}" \
+              -var="tenant_id=${{ secrets.ARM_TENANT_ID }}" \
+              -var="subscription_id=${{ secrets.ARM_SUBSCRIPTION_ID }}" \
+              -var="use_oidc=true" \
+              -out=tfplan
+          fi
+
+      - name: Terraform Apply (Skip if Destroy)
+        if: ${{ github.event.inputs.destroy == 'false' }}
         run: terraform apply -input=false -auto-approve tfplan
-        env:
-          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-          ARM_USE_OIDC: "true"
+
+      - name: Terraform Destroy (Skip if Apply)
+        if: ${{ github.event.inputs.destroy == 'true' }}
+        run: terraform apply -auto-approve tfplan
