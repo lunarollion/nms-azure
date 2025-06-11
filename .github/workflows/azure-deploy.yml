@@ -4,14 +4,28 @@ on:
   workflow_dispatch:
     inputs:
       customer:
-        description: 'Customer name (e.g., hyc, stttelemedia)'
+        description: 'Select the customer'
         required: true
+        type: choice
+        options:
+          - hyc
+          - stttelemedia
+
       environment:
-        description: 'Environment (Dev or Prod)'
+        description: 'Select the environment'
         required: true
+        type: choice
+        options:
+          - Dev
+          - Prod
+
       destroy:
-        description: 'Destroy resources? (true or false)'
+        description: 'Destroy resources?'
         required: true
+        type: choice
+        options:
+          - false
+          - true
 
 jobs:
   terraform:
