@@ -1,5 +1,5 @@
 module "vm_monitoring" {
-  source              = "./modules/vm_monitoring"
+  source              = "./modules/alert_vm"
   resource_group_name = var.resource_group_name
   alert_email         = var.alert_email
   vm_id               = var.vm_id
@@ -10,6 +10,6 @@ module "vm_monitoring" {
   virtual_machines    = var.virtual_machines
 
   providers = {
-    azurerm = azurerm
+    azurerm = azurerm.hyc
   }
 }

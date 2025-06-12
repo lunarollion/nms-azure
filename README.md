@@ -1,15 +1,28 @@
-Azure Terraform Structure
-├── main.tf           # Root main file, usually calls modules
-├── variables.tf
-├── providers.tf
-├── terraform.tfvars        # <-- Variable values 
-├── outputs.tf
+.
+├── github/
+│   └── workflows/
+│       └── azure-deployment.yaml     # GitHub Actions workflow
+├── main.tf                           # Root file calling all modules
+├── providers.tf                      # Azure provider config (with backend if needed)
+├── variables.tf                      # Input variable definitions
+├── outputs.tf                        # Global outputs
+├── customer/
+│   ├── hyc.tfvars                    # Customer-specific variable values
+│   └── stttelemedia.tfvars
 ├── modules/
-│   ├── vm_module/
-│   │    ├── main.tf           # VM + Networking resources
-│   │    ├── variables.tf
-│   │    └── outputs.tf
-│   └── monitoring_module/
-│        ├── main.tf           # Monitoring resources (Log Analytics, Diagnostic settings, alerts)
-│        ├── variables.tf
-│        └── outputs.tf
+│   ├── action_group/
+│   │   ├── main.tf
+│   │   ├── variables.tf
+│   │   └── outputs.tf
+│   ├── alert_vm/
+│   │   ├── main.tf                   # VM metric alerts: CPU, memory, disk
+│   │   ├── variables.tf
+│   │   └── outputs.tf
+│   ├── alert_cdn/
+│   │   ├── main.tf                   # CDN metric alerts: latency, 5xx, etc.
+│   │   ├── variables.tf
+│   │   └── outputs.tf
+│   └── alert_dns/
+│       ├── main.tf                   # DNS metric alerts: query failures, etc.
+│       ├── variables.tf
+│       └── outputs.tf
