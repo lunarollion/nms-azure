@@ -14,3 +14,4 @@ provider "azurerm" {
   use_oidc        = var.use_oidc
   features {}
 }
+

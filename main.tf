@@ -13,4 +13,3 @@ module "vm_monitoring" {
     azurerm = azurerm.hyc
   }
 }
-

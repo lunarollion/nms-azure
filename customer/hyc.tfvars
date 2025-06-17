@@ -12,7 +12,7 @@ resource_group_name = "apac-es-devops-lunar-gultom"
 location            = "eastus"
 
 tags = {
-  environment = "poc"
+  environment = "prod"
   owner       = "poc-hyc"
   project     = "poc-monitoring"
 }
