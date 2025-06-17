@@ -30,7 +30,7 @@ resource "azurerm_monitor_metric_alert" "high_cpu_alert" {
   }
 
   action {
-  action_group_id = var.action_group_id
+    action_group_id = var.action_group_id
   }
 }
 

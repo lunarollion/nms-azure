@@ -22,7 +22,7 @@ module "vm_monitoring" {
   vm_names            = var.vm_names
   virtual_machines    = var.virtual_machines
 
-  action_group_id     = module.action_group.id
+  action_group_id = module.action_group.id
 
   providers = {
     azurerm = azurerm.hyc
@@ -37,7 +37,7 @@ module "dns_monitoring" {
   tags                = var.tags
   dns_zone_id         = var.dns_zone_id
 
-  action_group_id     = module.action_group.id
+  action_group_id = module.action_group.id
 
   providers = {
     azurerm = azurerm.hyc
