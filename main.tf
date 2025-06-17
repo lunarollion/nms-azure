@@ -9,6 +9,10 @@ module "action_group" {
     environment = "prod"
     owner       = "ollion"
   }
+
+  providers = {
+    azurerm = azurerm.hyc
+  }
 }
 
 module "vm_monitoring" {
