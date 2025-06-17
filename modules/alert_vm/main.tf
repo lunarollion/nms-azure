@@ -7,20 +7,6 @@ terraform {
   }
 }
 
-resource "azurerm_monitor_action_group" "poc_alert" {
-  name                = "POCAutomateAlert"
-  resource_group_name = var.resource_group_name
-  short_name          = "poc-alert"
-
-  email_receiver {
-    name                    = "default-email"
-    email_address           = var.alert_email
-    use_common_alert_schema = true
-  }
-
-  tags = var.tags
-}
-
 #####################################
 # VM Alert - High CPU
 #####################################
@@ -44,8 +30,59 @@ resource "azurerm_monitor_metric_alert" "high_cpu_alert" {
   }
 
   action {
-    action_group_id = azurerm_monitor_action_group.poc_alert.id
+  action_group_id = var.action_group_id
+  }
+}
+
+#####################################
+# VM Alert - Memory < 10 GB
+#####################################
+resource "azurerm_monitor_metric_alert" "low_memory_bytes_alert" {
+  name                = "low_memory_alert_10gb"
+  resource_group_name = var.resource_group_name
+  scopes              = [var.vm_id]
+  description         = "Alert when available memory is below 10 GB"
+  severity            = 3
+  frequency           = "PT1M"
+  window_size         = "PT5M"
+  auto_mitigate       = true
+  enabled             = true
+
+  criteria {
+    metric_namespace = "Microsoft.Compute/virtualMachines"
+    metric_name      = "Available Memory Bytes"
+    aggregation      = "Average"
+    operator         = "LessThan"
+    threshold        = 10000000000
+  }
+
+  action {
+    action_group_id = var.action_group_id
   }
 }
 
 
+
+resource "azurerm_monitor_metric_alert" "low_memory_percentage" {
+  name                = "low_memory_alert_10percent"
+  resource_group_name = var.resource_group_name
+  scopes              = [var.vm_id]
+  description         = "Alert when available memory is below 10%"
+  severity            = 3
+  frequency           = "PT1M"
+  window_size         = "PT5M"
+  auto_mitigate       = true
+  enabled             = true
+
+  criteria {
+    metric_namespace = "Microsoft.Compute/virtualMachines"
+    metric_name      = "Available Memory Percentage"
+    aggregation      = "Average"
+    operator         = "GreaterThan"
+    threshold        = 10
+  }
+
+  action {
+    action_group_id = var.action_group_id
+  }
+}

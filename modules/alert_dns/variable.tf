@@ -1,6 +1,6 @@
 variable "resource_group_name" {
   type        = string
-  description = "Name of the resource group"
+  description = "Name of the resource group where DNS and alerts reside"
 }
 
 variable "alert_email" {
@@ -14,16 +14,6 @@ variable "tags" {
   default     = {}
 }
 
-variable "vm_id" {
-  type        = string
-  description = "ID of the virtual machine"
-}
-
-variable "cdn_profile_id" {
-  type        = string
-  description = "CDN Profile ID"
-  default     = null
-}
 
 variable "dns_zone_id" {
   type        = string
@@ -31,17 +21,7 @@ variable "dns_zone_id" {
   default     = null
 }
 
-variable "vm_names" {
-  type        = map(string)
-  description = "Map of VM names for identification or tagging"
-  default     = {}
+variable "action_group_id" {
+  type        = string
+  description = "ID of the Action Group used for DNS alerts"
 }
-
-variable "virtual_machines" {
-  type = list(object({
-    name           = string
-    location       = string
-    resource_group = string
-  }))
-}
-

@@ -8,11 +8,14 @@ resource "azurerm_monitor_action_group" "main" {
   short_name          = var.short_name
 
   dynamic "email_receiver" {
-    for_each = var.list_of_email
+    for_each = var.email_receivers
 
     content {
-      name          = email_receiver.value
-      email_address = email_receiver.value
+      name                    = replace(email_receiver.value, "@", "_")
+      email_address           = email_receiver.value
+      use_common_alert_schema = true
     }
   }
+
+  tags = var.tags
 }

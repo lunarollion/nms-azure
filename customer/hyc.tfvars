@@ -65,6 +65,9 @@ virtual_machines = [
 vm_id = "/subscriptions/0e1373c7-d99a-4eaa-9e16-59e648375f9e/resourceGroups/apac-es-devops-lunar-gultom/providers/Microsoft.Compute/virtualMachines/poc-hyc"
 
 network_interface_id = "/subscriptions/0e1373c7-d99a-4eaa-9e16-59e648375f9e/resourceGroups/apac-es-devops-lunar-gultom/providers/Microsoft.Network/networkInterfaces/poc-hyc464_z1"
+
+dns_zone_id = "/subscriptions/0e1373c7-d99a-4eaa-9e16-59e648375f9e/resourceGroups/apac-es-devops-lunar-gultom/providers/Microsoft.Network/dnszones/hycpoc.com"
+
 # ======================
 # Optional: Freshservice Integration
 # ======================

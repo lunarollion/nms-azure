@@ -1,16 +1,26 @@
 variable "name" {
-  type = string
+  description = "Name of the Action Group"
+  type        = string
 }
 
 variable "short_name" {
-  type = string
+  description = "Short name (<=12 chars) for Action Group"
+  type        = string
 }
 
 variable "resource_group_name" {
-  type = string
+  description = "Resource Group in which to create the Action Group"
+  type        = string
 }
 
-variable "list_of_email" {
+variable "email_receivers" {
+  description = "List of email addresses to receive alerts"
   type        = list(string)
-  description = "List of email addresss to send email notifications"
 }
+
+variable "tags" {
+  description = "Tags to apply to the Action Group"
+  type        = map(string)
+  default     = {}
+}
+

@@ -45,3 +45,7 @@ variable "virtual_machines" {
   }))
 }
 
+variable "action_group_id" {
+  description = "The ID of the action group to attach to alerts"
+  type        = string
+}
