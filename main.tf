@@ -1,3 +1,13 @@
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "apac-es-devops-lunar-gultom"
+    storage_account_name = "hyctfstatestore"
+    container_name       = "hyctfstate"
+    key                  = "hyc-prod.terraform.tfstate"
+  }
+}
+
+
 module "action_group" {
   source              = "./modules/action_group"
   name                = "POCAutomateAlert"
