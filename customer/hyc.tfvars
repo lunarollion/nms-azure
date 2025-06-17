@@ -49,7 +49,7 @@ virtual_machines = [
     vm_size        = "Standard_B2als_v2"
     subnet_name    = "subnet1"
     os_disk = {
-      name                 = "poc-hyc_OsDisk_1"
+      name                 = "poc-hyc_OsDisk_1_8b1e2397ace54467b7e8cb99d3f58467"
       storage_account_type = "Premium_LRS"
       disk_size_gb         = 30
     }
@@ -65,7 +65,6 @@ virtual_machines = [
 vm_id = "/subscriptions/0e1373c7-d99a-4eaa-9e16-59e648375f9e/resourceGroups/apac-es-devops-lunar-gultom/providers/Microsoft.Compute/virtualMachines/poc-hyc"
 
 network_interface_id = "/subscriptions/0e1373c7-d99a-4eaa-9e16-59e648375f9e/resourceGroups/apac-es-devops-lunar-gultom/providers/Microsoft.Network/networkInterfaces/poc-hyc464_z1"
-
 # ======================
 # Optional: Freshservice Integration
 # ======================
