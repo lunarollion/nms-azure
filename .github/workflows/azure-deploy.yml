@@ -54,7 +54,7 @@ jobs:
           tenant-id: ${{ secrets.ARM_TENANT_ID }}
           subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           audience: api://AzureADTokenExchange
-          enable-AzPSSession: true
+          enable-AzPSSession: false
 
 
       - name: Setup Terraform
