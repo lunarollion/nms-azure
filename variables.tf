@@ -137,3 +137,21 @@ variable "network_interface_id" {
   description = "The ID of the network interface"
   default     = "/subscriptions/233e16db-2636-4f3c-8ae7-cdd9678d940b/resourceGroups/poc-hyc/providers/Microsoft.Network/networkInterfaces/poc-hyc542_z2"
 }
+
+variable "data_path_availability_threshold" {
+  type        = number
+  description = "Threshold for data path availability alerts"
+  default     = 80
+}
+
+variable "aks_id" {
+  description = "AKS cluster resource ID"
+  type        = string
+  default     = ""
+}
+
+variable "lb_id" {
+  description = "Azure Load Balancer ID"
+  type        = string
+  default     = ""
+}

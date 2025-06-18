@@ -24,6 +24,8 @@ module "action_group" {
   }
 }
 
+# MODULE: alert_vm
+
 module "vm_monitoring" {
   source              = "./modules/alert_vm"
   resource_group_name = var.resource_group_name
@@ -42,6 +44,7 @@ module "vm_monitoring" {
   }
 }
 
+# MODULE: alert_dns
 
 module "dns_monitoring" {
   source              = "./modules/alert_dns"
@@ -51,6 +54,37 @@ module "dns_monitoring" {
   dns_zone_id         = var.dns_zone_id
 
   action_group_id = module.action_group.id
+
+  providers = {
+    azurerm = azurerm.hyc
+  }
+}
+
+# MODULE: alert_aks
+module "alert_aks" {
+  count = var.lb_id != "" ? 1 : 0 ## REMOVE THIS IF CUSTOMER HAVE A EKS and put ID AKS in variables
+  source                  = "./modules/alert_aks"
+  aks_id                  = var.aks_id
+  resource_group_name     = var.resource_group_name
+  alert_email             = var.alert_email
+
+  action_group_id         = module.action_group.id
+
+  providers = {
+    azurerm = azurerm.hyc
+  }
+}
+
+module "alert_loadbalancer" {
+  count = var.lb_id != "" ? 1 : 0  ## REMOVE THIS IF CUSTOMER HAVE A EKS and put ID loadBalancers in variables
+  source = "./modules/alert_loadbalancer"
+
+  resource_group_name              = var.resource_group_name
+  lb_id                            = var.lb_id
+  alert_email                      = var.alert_email
+  action_group_id                  = module.action_group.id
+  health_probe_status_threshold    = 2
+  data_path_availability_threshold = 80
 
   providers = {
     azurerm = azurerm.hyc
