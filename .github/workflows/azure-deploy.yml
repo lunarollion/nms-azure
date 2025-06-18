@@ -92,17 +92,14 @@ jobs:
       - name: Terraform Apply or Destroy
         run: |
           TFVARS="customer/${CUSTOMER}.tfvars"
-          case "$ACTION" in
-            apply)
-              echo "✅ Applying changes"
-              terraform apply -input=false -auto-approve tfplan
-              ;;
-            destroy)
-              echo "⚠️ Destroying infrastructure"
-              terraform destroy -input=false -auto-approve -var-file="$TFVARS"
-              ;;
-            *)
-              echo "❌ Invalid action: $ACTION. Only 'apply' or 'destroy' are allowed here."
-              exit 1
-              ;;
-          esac
+          if [ "$ACTION" = "destroy" ]; then
+            echo "⚠️ Destroying infrastructure"
+            terraform destroy -input=false -auto-approve -var-file="$TFVARS"
+          elif [ "$ACTION" = "apply" ]; then
+            echo "✅ Applying previously planned changes"
+            terraform apply -input=false -auto-approve tfplan
+          else
+            echo "❌ Invalid action: $ACTION. Expected 'apply' or 'destroy'."
+            exit 1
+          fi
+
