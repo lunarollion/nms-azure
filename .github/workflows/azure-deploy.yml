@@ -88,18 +88,19 @@ jobs:
           else
             terraform plan -input=false -var-file="$TFVARS" -out=tfplan
             terraform show tfplan
+          fi
 
       - name: Terraform Apply or Destroy
+        if: ${{ success() && github.event.inputs.action != 'plan' }}
         run: |
           TFVARS="customer/${CUSTOMER}.tfvars"
           if [ "$ACTION" = "destroy" ]; then
             echo "⚠️ Destroying infrastructure"
             terraform destroy -input=false -auto-approve -var-file="$TFVARS"
           elif [ "$ACTION" = "apply" ]; then
-            echo "✅ Applying previously planned changes"
+            echo "✅ Applying changes from tfplan"
             terraform apply -input=false -auto-approve tfplan
           else
             echo "❌ Invalid action: $ACTION. Expected 'apply' or 'destroy'."
             exit 1
           fi
-
