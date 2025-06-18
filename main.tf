@@ -62,7 +62,7 @@ module "dns_monitoring" {
 
 # MODULE: alert_aks
 module "alert_aks" {
-  count = var.lb_id != "" ? 1 : 0 ## REMOVE THIS IF CUSTOMER HAVE A EKS and put ID AKS in variables
+  count = var.lb_id != "" ? 1 : 0 ## REMOVE THIS IF THE CUSTOMER HAVE A EKS and put ID AKS in variables
   source                  = "./modules/alert_aks"
   aks_id                  = var.aks_id
   resource_group_name     = var.resource_group_name
@@ -76,7 +76,7 @@ module "alert_aks" {
 }
 
 module "alert_loadbalancer" {
-  count = var.lb_id != "" ? 1 : 0  ## REMOVE THIS IF CUSTOMER HAVE A EKS and put ID loadBalancers in variables
+  count = var.lb_id != "" ? 1 : 0  ## REMOVE THIS IF THE CUSTOMER HAVE A EKS and put ID loadBalancers in variables
   source = "./modules/alert_loadbalancer"
 
   resource_group_name              = var.resource_group_name
