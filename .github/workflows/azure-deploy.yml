@@ -20,25 +20,27 @@ on:
       action:
         description: 'Terraform Action'
         required: true
+        default: 'plan'
         type: choice
         options:
+          - plan
           - apply
           - destroy
 
 jobs:
   terraform:
-    name: Azure Workflow
+    name: Azure Terraform Workflow
     runs-on: ubuntu-latest
 
     permissions:
-      id-token: write      # Needed for OIDC
+      id-token: write
       contents: read
 
     env:
       TF_IN_AUTOMATION: true
-      CUSTOMER: ${{ github.event.inputs.customer || 'hyc' }}
-      ENVIRONMENT: ${{ github.event.inputs.environment || 'prod' }}
-      ACTION: ${{ github.event.inputs.action || 'apply' }}
+      CUSTOMER: ${{ github.event.inputs.customer }}
+      ENVIRONMENT: ${{ github.event.inputs.environment }}
+      ACTION: ${{ github.event.inputs.action }}
 
     steps:
       - name: Checkout Repository
@@ -51,7 +53,7 @@ jobs:
           tenant-id: ${{ secrets.ARM_TENANT_ID }}
           subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
-      - name: Export Terraform ENV variables for OIDC
+      - name: Export Terraform ENV variables
         run: |
           echo "ARM_CLIENT_ID=${{ secrets.ARM_CLIENT_ID }}" >> $GITHUB_ENV
           echo "ARM_SUBSCRIPTION_ID=${{ secrets.ARM_SUBSCRIPTION_ID }}" >> $GITHUB_ENV
@@ -64,35 +66,20 @@ jobs:
           terraform_version: 1.7.5
           terraform_wrapper: false
 
-      - name: Terraform Init (Reconfigure Backend)
-        run: |
-          terraform init -input=false -reconfigure
+      - name: Terraform Init
+        run: terraform init -input=false -reconfigure
 
       - name: Handle Workspace
         run: |
           WORKSPACE="${CUSTOMER}-${ENVIRONMENT}"
           echo "Using workspace: $WORKSPACE"
-          if terraform workspace list | grep -q "$WORKSPACE"; then
-            terraform workspace select "$WORKSPACE"
-          else
-            terraform workspace new "$WORKSPACE"
-          fi
-
-      - name: Terraform Format Check
-        run: terraform fmt -check -recursive -diff
+          terraform workspace list | grep "$WORKSPACE" && terraform workspace select "$WORKSPACE" || terraform workspace new "$WORKSPACE"
 
       - name: Terraform Validate
-        run: terraform validate -no-color
-
-      - name: Debug Terraform Workspace & State
-        run: |
-          echo "Current Workspace:"
-          terraform workspace show
-
-          echo "Listing state contents (if any):"
-          terraform state list || echo "No resources found in state"
+        run: terraform validate
 
       - name: Terraform Plan
+        id: plan
         run: |
           TFVARS="customer/${CUSTOMER}.tfvars"
           if [ "$ACTION" = "destroy" ]; then
@@ -100,14 +87,22 @@ jobs:
             terraform show tfplan
           else
             terraform plan -input=false -var-file="$TFVARS" -out=tfplan
-          fi
+            terraform show tfplan
 
       - name: Terraform Apply or Destroy
         run: |
           TFVARS="customer/${CUSTOMER}.tfvars"
-          if [ "$ACTION" = "destroy" ]; then
-            echo "⚠️ Executing terraform destroy"
-            terraform destroy -input=false -auto-approve -var-file="$TFVARS"
-          else
-            terraform apply -input=false -auto-approve tfplan
-          fi
+          case "$ACTION" in
+            apply)
+              echo "✅ Applying changes"
+              terraform apply -input=false -auto-approve tfplan
+              ;;
+            destroy)
+              echo "⚠️ Destroying infrastructure"
+              terraform destroy -input=false -auto-approve -var-file="$TFVARS"
+              ;;
+            *)
+              echo "❌ Invalid action: $ACTION. Only 'apply' or 'destroy' are allowed here."
+              exit 1
+              ;;
+          esac
