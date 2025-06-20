@@ -1,4 +1,4 @@
-.
+.Terrafrom Structure for Azure
 ├── github/
 │   └── workflows/
 │       └── azure-deployment.yaml     # GitHub Actions workflow
@@ -8,21 +8,29 @@
 ├── outputs.tf                        # Global outputs
 ├── customer/
 │   ├── hyc.tfvars                    # Customer-specific variable values
-│   └── stttelemedia.tfvars
+│   └── client.tfvars
 ├── modules/
 │   ├── action_group/
 │   │   ├── main.tf
 │   │   ├── variables.tf
 │   │   └── outputs.tf
 │   ├── alert_vm/
-│   │   ├── main.tf                   # VM metric alerts: CPU, memory, disk
+│   │   ├── main.tf                   # VM metric alerts
 │   │   ├── variables.tf
 │   │   └── outputs.tf
 │   ├── alert_cdn/
-│   │   ├── main.tf                   # CDN metric alerts: latency, 5xx, etc.
+│   │   ├── main.tf                   # CDN metric alerts
 │   │   ├── variables.tf
 │   │   └── outputs.tf
 │   └── alert_dns/
-│       ├── main.tf                   # DNS metric alerts: query failures, etc.
+│       ├── main.tf                   # DNS metric alerts
 │       ├── variables.tf
 │       └── outputs.tf
+│   ├── alert_aks/
+│   │   ├── main.tf                   # AKS metric alerts
+│   │   ├── variables.tf
+│   │   └── outputs.tf
+│   ├── alert_loadbalancer/
+│   │   ├── main.tf                   # Load Balancer metric alerts
+│   │   ├── variables.tf
+│   │   └── outputs.tf
